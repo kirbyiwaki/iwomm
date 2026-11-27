@@ -3,7 +3,7 @@ title: Create custom pinned icons for additional Vivaldi profiles
 tags: browser, vivaldi, taskbar, shortcut, icon
 ---
 
-Vivaldi allows you to create multiple profiles, but it's difficult to pin each of them to the taskbar. Here's how to do it:
+Vivaldi allows you to create multiple profiles, but it's difficult to pin each of them to the taskbar with custom icons. Here's how to do it:
 
 1. Create a desktop shortcut for each profile.
    - If you're making the profile, select "Create Desktop Shortcut" while making it.
