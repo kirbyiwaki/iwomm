@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -8,12 +9,10 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link
     href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap"
-    rel="stylesheet"
-  />
+    rel="stylesheet" />
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
   <style>
     :root {
-      /* Dracula Surface + Saturated Google Accent Colors */
       --bg: #282a36;
       --bg-elevated: #21222c;
       --card-bg: #313442;
@@ -44,7 +43,6 @@
       min-height: 100vh;
     }
 
-    /* Header & Saturated Google-Style Parody Logo */
     header {
       display: flex;
       flex-direction: column;
@@ -65,10 +63,21 @@
       text-shadow: 0 2px 8px rgba(0, 0, 0, 0.45);
     }
 
-    .g-blue   { color: var(--g-blue); }
-    .g-red    { color: var(--g-red); }
-    .g-yellow { color: var(--g-yellow); }
-    .g-green  { color: var(--g-green); }
+    .g-blue {
+      color: var(--g-blue);
+    }
+
+    .g-red {
+      color: var(--g-red);
+    }
+
+    .g-yellow {
+      color: var(--g-yellow);
+    }
+
+    .g-green {
+      color: var(--g-green);
+    }
 
     .search-box {
       width: 100%;
@@ -143,7 +152,6 @@
       box-shadow: 0 0 10px rgba(66, 133, 244, 0.2);
     }
 
-    /* Main Container */
     main {
       max-width: 780px;
       margin: 0 auto;
@@ -156,7 +164,6 @@
       margin-bottom: 16px;
     }
 
-    /* Cards with Subtle Glow (No Movement) */
     .results-grid {
       display: flex;
       flex-direction: column;
@@ -173,9 +180,17 @@
       transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
     }
 
-    .card:nth-child(4n+2) { border-left-color: var(--g-red); }
-    .card:nth-child(4n+3) { border-left-color: var(--g-yellow); }
-    .card:nth-child(4n+4) { border-left-color: var(--g-green); }
+    .card:nth-child(4n+2) {
+      border-left-color: var(--g-red);
+    }
+
+    .card:nth-child(4n+3) {
+      border-left-color: var(--g-yellow);
+    }
+
+    .card:nth-child(4n+4) {
+      border-left-color: var(--g-green);
+    }
 
     .card:hover {
       background: var(--card-hover);
@@ -234,7 +249,6 @@
       border-radius: 4px;
     }
 
-    /* Fix Reader View */
     .article-view {
       display: none;
     }
@@ -350,20 +364,22 @@
     }
   </style>
 </head>
+
 <body>
 
   <header>
     <h1 class="logo" id="logoBtn" title="Reset search">
-      <span class="g-blue">w</span><span class="g-red">o</span><span class="g-yellow">r</span><span class="g-blue">k</span><span class="g-green">s</span><span class="g-red">O</span><span class="g-yellow">n</span><span class="g-blue">M</span><span class="g-green">y</span><span class="g-red">M</span><span class="g-yellow">a</span><span class="g-blue">c</span><span class="g-green">h</span><span class="g-red">i</span><span class="g-yellow">n</span><span class="g-green">e</span>
+      <span class="g-blue">w</span><span class="g-red">o</span><span class="g-yellow">r</span><span
+        class="g-blue">k</span><span class="g-green">s</span><span class="g-red">O</span><span
+        class="g-yellow">n</span><span class="g-blue">M</span><span class="g-green">y</span><span
+        class="g-red">M</span><span class="g-yellow">a</span><span class="g-blue">c</span><span
+        class="g-green">h</span><span class="g-red">i</span><span class="g-yellow">n</span><span
+        class="g-green">e</span>
     </h1>
 
     <div class="search-box">
-      <input
-        type="text"
-        id="searchInput"
-        placeholder="Search Windows fixes, error codes, commands..."
-        autocomplete="off"
-      />
+      <input type="text" id="searchInput" placeholder="Search Windows fixes, error codes, commands..."
+        autocomplete="off" />
       <button class="clear-btn" id="clearBtn" title="Clear">✕</button>
     </div>
 
@@ -409,7 +425,6 @@
         .replace(/"/g, '&quot;');
     }
 
-    // Strip YAML frontmatter even with \r\n or accidental blank lines
     function stripFrontmatter(text) {
       let title = null;
       let tags = [];
@@ -428,9 +443,6 @@
           tags = tagsMatch[1].split(',').map(t => t.trim()).filter(Boolean);
         }
       }
-
-      // Clean accidental leading indentation on non-code lines so Markdown doesn't treat them as code blocks
-      body = body.replace(/^[ \t]+(?=\S)/gm, '');
 
       return { title, tags, body };
     }
@@ -462,90 +474,11 @@
       };
     }
 
-    // Inline formatter used by fallback parser
-    function formatInline(text) {
-      let out = escapeHtml(text);
-      out = out.replace(/`([^`]+)`/g, '<code>$1</code>');
-      out = out.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
-      out = out.replace(/\*([^*\n]+)\*/g, '<em>$1</em>');
-      return out;
-    }
-
-    // Fallback Markdown renderer if external marked.js doesn't load
-    function fallbackMarkdown(mdText) {
-      const lines = mdText.split('\n');
-      let html = '';
-      let inCodeBlock = false;
-      let codeBuffer = [];
-      let listType = null; // 'ul' or 'ol'
-
-      function closeList() {
-        if (listType) {
-          html += listType === 'ul' ? '</ul>' : '</ol>';
-          listType = null;
-        }
-      }
-
-      for (const line of lines) {
-        if (line.trim().startsWith('```')) {
-          closeList();
-          if (!inCodeBlock) {
-            inCodeBlock = true;
-            codeBuffer = [];
-          } else {
-            html += `<pre><code>${escapeHtml(codeBuffer.join('\n'))}</code></pre>`;
-            inCodeBlock = false;
-          }
-          continue;
-        }
-
-        if (inCodeBlock) {
-          codeBuffer.push(line);
-          continue;
-        }
-
-        const trimmed = line.trim();
-        if (!trimmed) {
-          closeList();
-          continue;
-        }
-
-        const h3 = trimmed.match(/^###\s+(.+)/);
-        if (h3) { closeList(); html += `<h3>${formatInline(h3[1])}</h3>`; continue; }
-
-        const h2 = trimmed.match(/^##\s+(.+)/);
-        if (h2) { closeList(); html += `<h2>${formatInline(h2[1])}</h2>`; continue; }
-
-        const h1 = trimmed.match(/^#\s+(.+)/);
-        if (h1) { closeList(); html += `<h1>${formatInline(h1[1])}</h1>`; continue; }
-
-        const ol = trimmed.match(/^\d+\.\s+(.+)/);
-        if (ol) {
-          if (listType !== 'ol') { closeList(); html += '<ol>'; listType = 'ol'; }
-          html += `<li>${formatInline(ol[1])}</li>`;
-          continue;
-        }
-
-        const ul = trimmed.match(/^[-*]\s+(.+)/);
-        if (ul) {
-          if (listType !== 'ul') { closeList(); html += '<ul>'; listType = 'ul'; }
-          html += `<li>${formatInline(ul[1])}</li>`;
-          continue;
-        }
-
-        closeList();
-        html += `<p>${formatInline(trimmed)}</p>`;
-      }
-
-      closeList();
-      return html;
-    }
-
     function renderMarkdown(mdText) {
-      if (window.marked && typeof window.marked.parse === 'function') {
-        return window.marked.parse(mdText);
+      if (!window.marked || typeof window.marked.parse !== 'function') {
+        throw new Error('marked.js failed to load from CDN.');
       }
-      return fallbackMarkdown(mdText);
+      return window.marked.parse(mdText);
     }
 
     function buildSnippet(plainText, query) {
@@ -574,10 +507,10 @@
       const startTime = performance.now();
       const filtered = q
         ? allFixes.filter(fix =>
-            fix.title.toLowerCase().includes(q) ||
-            fix.plainText.toLowerCase().includes(q) ||
-            fix.tags.some(t => t.toLowerCase().includes(q))
-          )
+          fix.title.toLowerCase().includes(q) ||
+          fix.plainText.toLowerCase().includes(q) ||
+          fix.tags.some(t => t.toLowerCase().includes(q))
+        )
         : allFixes;
 
       const elapsed = ((performance.now() - startTime) / 1000).toFixed(3);
@@ -617,11 +550,20 @@
         ? `<div class="tags" style="margin-bottom:18px;">${fix.tags.map(t => `<span class="tag" onclick="filterByTag('${t.replace(/'/g, "\\'")}')">#${escapeHtml(t)}</span>`).join('')}</div>`
         : '';
 
-      articleContent.innerHTML = `
-        <h1>${escapeHtml(fix.title)}</h1>
-        ${tagsHtml}
-        ${renderMarkdown(fix.body)}
-      `;
+      try {
+        const renderedBody = renderMarkdown(fix.body);
+        articleContent.innerHTML = `
+          <h1>${escapeHtml(fix.title)}</h1>
+          ${tagsHtml}
+          ${renderedBody}
+        `;
+      } catch (err) {
+        articleContent.innerHTML = `
+          <h1>${escapeHtml(fix.title)}</h1>
+          ${tagsHtml}
+          <div class="empty-state">${escapeHtml(err.message)}</div>
+        `;
+      }
       window.scrollTo(0, 0);
     }
 
@@ -703,4 +645,5 @@
     init();
   </script>
 </body>
+
 </html>
