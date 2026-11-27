@@ -4,85 +4,99 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>worksOnMyMachine</title>
+  <!-- Fun display font + Dracula-friendly UI & code fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap"
+    rel="stylesheet"
+  />
   <!-- Lightweight Markdown parser -->
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
   <style>
     :root {
-      --bg: #ffffff;
-      --surface: #ffffff;
-      --border: #dfe1e5;
-      --text: #202124;
-      --muted: #5f6368;
-      --link: #1a0dab;
-      --tag-bg: #f1f3f4;
-      --code-bg: #f6f8fa;
-      --shadow: 0 1px 6px rgba(32, 33, 36, 0.28);
+      /* Dracula Theme Palette */
+      --bg: #282a36;
+      --bg-elevated: #21222c;
+      --card-bg: #313442;
+      --card-hover: #383b4d;
+      --border: #44475a;
+      --fg: #f8f8f2;
+      --comment: #8b9bb4;
+      --cyan: #8be9fd;
+      --green: #50fa7b;
+      --orange: #ffb86c;
+      --pink: #ff79c6;
+      --purple: #bd93f9;
+      --red: #ff5555;
+      --yellow: #f1fa8c;
+      --code-bg: #1e1f29;
+      --shadow: 0 8px 24px rgba(15, 16, 23, 0.45);
     }
 
-    @media (prefers-color-scheme: dark) {
-      :root {
-        --bg: #202124;
-        --surface: #303134;
-        --border: #5f6368;
-        --text: #e8eaed;
-        --muted: #9aa0a6;
-        --link: #8ab4f8;
-        --tag-bg: #3c4043;
-        --code-bg: #171717;
-        --shadow: 0 1px 6px rgba(0, 0, 0, 0.6);
-      }
+    * {
+      box-sizing: border-box;
     }
-
-    * { box-sizing: border-box; }
 
     body {
       margin: 0;
-      font-family: Arial, Helvetica, sans-serif;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
       background: var(--bg);
-      color: var(--text);
-      line-height: 1.5;
+      color: var(--fg);
+      line-height: 1.6;
+      min-height: 100vh;
     }
 
-    /* Header & Google-Parody Logo */
+    /* Header & Fun Parody Logo */
     header {
       display: flex;
       flex-direction: column;
       align-items: center;
-      padding: 36px 16px 20px;
+      padding: 34px 16px 24px;
+      background: linear-gradient(180deg, var(--bg-elevated) 0%, var(--bg) 100%);
       border-bottom: 1px solid var(--border);
     }
 
     .logo {
-      font-size: clamp(1.8rem, 4vw, 2.7rem);
+      font-family: 'Fredoka', 'Comic Sans MS', cursive, sans-serif;
+      font-size: clamp(2rem, 5vw, 3.1rem);
       font-weight: 700;
-      letter-spacing: -1px;
+      letter-spacing: 0.5px;
       margin: 0 0 18px;
       cursor: pointer;
       user-select: none;
+      text-shadow: 0 3px 0 rgba(0, 0, 0, 0.35);
+      transition: transform 0.15s ease;
     }
 
-    /* Classic search engine letter colors */
-    .c-blue   { color: #4285f4; }
-    .c-red    { color: #ea4335; }
-    .c-yellow { color: #fbbc05; }
-    .c-green  { color: #34a853; }
+    .logo:hover {
+      transform: scale(1.02);
+    }
+
+    /* Dracula-tinted parody colors */
+    .c-cyan   { color: var(--cyan); }
+    .c-pink   { color: var(--pink); }
+    .c-yellow { color: var(--yellow); }
+    .c-green  { color: var(--green); }
+    .c-purple { color: var(--purple); }
+    .c-orange { color: var(--orange); }
 
     .search-box {
       width: 100%;
       max-width: 620px;
       display: flex;
       align-items: center;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 24px;
-      padding: 10px 18px;
-      transition: box-shadow 0.15s ease;
+      background: var(--card-bg);
+      border: 1.5px solid var(--border);
+      border-radius: 999px;
+      padding: 11px 18px;
+      transition: border-color 0.15s ease, box-shadow 0.15s ease;
     }
 
     .search-box:hover,
     .search-box:focus-within {
-      box-shadow: var(--shadow);
-      border-color: transparent;
+      border-color: var(--purple);
+      box-shadow: 0 0 0 3px rgba(189, 147, 249, 0.2);
     }
 
     .search-box input {
@@ -90,84 +104,123 @@
       border: none;
       outline: none;
       background: transparent;
-      color: var(--text);
-      font-size: 16px;
+      color: var(--fg);
+      font-family: inherit;
+      font-size: 15.5px;
+    }
+
+    .search-box input::placeholder {
+      color: var(--comment);
     }
 
     .clear-btn {
       background: none;
       border: none;
-      color: var(--muted);
-      font-size: 18px;
+      color: var(--comment);
+      font-size: 17px;
       cursor: pointer;
       display: none;
       padding: 0 4px;
     }
 
+    .clear-btn:hover {
+      color: var(--red);
+    }
+
     .actions {
       margin-top: 14px;
       display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
       gap: 10px;
     }
 
     .actions button {
-      background: var(--tag-bg);
-      border: 1px solid transparent;
-      border-radius: 4px;
-      color: var(--text);
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--fg);
+      font-family: inherit;
       font-size: 13px;
+      font-weight: 500;
       padding: 7px 14px;
       cursor: pointer;
+      transition: background 0.15s ease, border-color 0.15s ease, transform 0.1s ease;
     }
 
     .actions button:hover {
-      border-color: var(--border);
+      background: var(--card-hover);
+      border-color: var(--cyan);
+      transform: translateY(-1px);
     }
 
     /* Main Container */
     main {
-      max-width: 720px;
+      max-width: 780px;
       margin: 0 auto;
-      padding: 18px 16px 60px;
+      padding: 22px 16px 64px;
     }
 
     .stats {
       font-size: 13px;
-      color: var(--muted);
-      margin-bottom: 18px;
+      color: var(--comment);
+      margin-bottom: 16px;
     }
 
-    /* Search Result Cards */
+    /* Pretty Result Cards */
+    .results-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
     .card {
-      margin-bottom: 24px;
-      padding-bottom: 16px;
-      border-bottom: 1px solid var(--border);
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-left: 4px solid var(--purple);
+      border-radius: 12px;
+      padding: 16px 20px;
+      transition: transform 0.15s ease, border-color 0.15s ease, background 0.15s ease, box-shadow 0.15s ease;
+      cursor: pointer;
+    }
+
+    .card:nth-child(4n+2) { border-left-color: var(--cyan); }
+    .card:nth-child(4n+3) { border-left-color: var(--green); }
+    .card:nth-child(4n+4) { border-left-color: var(--pink); }
+
+    .card:hover {
+      background: var(--card-hover);
+      border-color: var(--purple);
+      transform: translateY(-2px);
+      box-shadow: var(--shadow);
     }
 
     .card-url {
-      font-size: 12px;
-      color: var(--muted);
-      margin-bottom: 2px;
-    }
-
-    .card-title {
-      font-size: 19px;
-      color: var(--link);
-      text-decoration: none;
-      font-weight: 400;
-      cursor: pointer;
-      display: inline-block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11.5px;
+      color: var(--comment);
       margin-bottom: 4px;
     }
 
-    .card-title:hover {
+    .card-title {
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--cyan);
+      text-decoration: none;
+      display: inline-block;
+      margin-bottom: 6px;
+    }
+
+    .card:hover .card-title {
       text-decoration: underline;
+      color: var(--pink);
     }
 
     .card-snippet {
       font-size: 14px;
-      color: var(--text);
-      margin: 4px 0 8px;
+      color: var(--fg);
+      margin: 0 0 12px;
+      overflow-wrap: anywhere;
     }
 
     .tags {
@@ -177,65 +230,134 @@
     }
 
     .tag {
-      font-size: 11px;
-      background: var(--tag-bg);
-      color: var(--muted);
-      padding: 2px 8px;
-      border-radius: 12px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11.5px;
+      background: var(--bg-elevated);
+      color: var(--green);
+      border: 1px solid var(--border);
+      padding: 2px 9px;
+      border-radius: 999px;
       cursor: pointer;
+      transition: border-color 0.15s ease, color 0.15s ease;
     }
 
     .tag:hover {
-      color: var(--text);
+      border-color: var(--yellow);
+      color: var(--yellow);
     }
 
     mark {
-      background: #fef08a;
-      color: #111;
-      padding: 0 2px;
-      border-radius: 2px;
+      background: rgba(241, 140, 241, 0.22);
+      color: var(--yellow);
+      font-weight: 600;
+      padding: 1px 4px;
+      border-radius: 4px;
     }
 
-    /* Article / Fix Detail View */
+    /* Fix Reader View */
     .article-view {
       display: none;
     }
 
     .back-btn {
-      background: none;
+      background: var(--card-bg);
       border: 1px solid var(--border);
-      color: var(--link);
-      padding: 6px 12px;
-      border-radius: 6px;
+      color: var(--cyan);
+      font-family: inherit;
+      padding: 7px 14px;
+      border-radius: 8px;
       cursor: pointer;
       font-size: 13px;
-      margin-bottom: 18px;
+      font-weight: 500;
+      margin-bottom: 16px;
+      transition: border-color 0.15s ease, background 0.15s ease;
     }
 
-    .article-content h1 {
+    .back-btn:hover {
+      background: var(--card-hover);
+      border-color: var(--cyan);
+    }
+
+    .article-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 24px 28px;
+      box-shadow: var(--shadow);
+      overflow-wrap: anywhere;
+    }
+
+    .article-content h1,
+    .article-content h2,
+    .article-content h3 {
+      color: var(--purple);
+      margin-top: 1.4em;
+      margin-bottom: 0.5em;
+      line-height: 1.3;
+    }
+
+    .article-content h1:first-child {
       margin-top: 0;
-      font-size: 24px;
+      font-size: 26px;
+      color: var(--fg);
+    }
+
+    .article-content h2 {
+      font-size: 20px;
+      color: var(--cyan);
+    }
+
+    .article-content h3 {
+      font-size: 16px;
+      color: var(--pink);
+    }
+
+    .article-content p,
+    .article-content li {
+      color: var(--fg);
+      margin-bottom: 10px;
+    }
+
+    .article-content ol,
+    .article-content ul {
+      padding-left: 22px;
+    }
+
+    .article-content a {
+      color: var(--cyan);
     }
 
     .article-content pre {
       background: var(--code-bg);
-      padding: 14px;
-      border-radius: 8px;
+      padding: 14px 16px;
+      border-radius: 10px;
       overflow-x: auto;
       border: 1px solid var(--border);
+      margin: 14px 0;
     }
 
     .article-content code {
-      font-family: Consolas, Monaco, 'Courier New', monospace;
-      font-size: 13.5px;
+      font-family: 'JetBrains Mono', Consolas, monospace;
+      font-size: 13px;
+      color: var(--orange);
       background: var(--code-bg);
-      padding: 2px 5px;
-      border-radius: 4px;
+      padding: 2px 6px;
+      border-radius: 5px;
     }
 
     .article-content pre code {
       padding: 0;
-      background: none;
+      background: transparent;
+      color: var(--green);
+    }
+
+    .empty-state {
+      background: var(--card-bg);
+      border: 1px dashed var(--border);
+      border-radius: 12px;
+      padding: 24px;
+      text-align: center;
+      color: var(--comment);
     }
   </style>
 </head>
@@ -243,7 +365,7 @@
 
   <header>
     <h1 class="logo" id="logoBtn" title="Reset search">
-      <span class="c-blue">w</span><span class="c-red">o</span><span class="c-yellow">r</span><span class="c-blue">k</span><span class="c-green">s</span><span class="c-red">O</span><span class="c-blue">n</span><span class="c-yellow">M</span><span class="c-green">y</span><span class="c-red">M</span><span class="c-blue">a</span><span class="c-yellow">c</span><span class="c-green">h</span><span class="c-red">i</span><span class="c-blue">n</span><span class="c-green">e</span>
+      <span class="c-cyan">w</span><span class="c-pink">o</span><span class="c-yellow">r</span><span class="c-green">k</span><span class="c-purple">s</span><span class="c-orange">O</span><span class="c-cyan">n</span><span class="c-pink">M</span><span class="c-yellow">y</span><span class="c-green">M</span><span class="c-purple">a</span><span class="c-orange">c</span><span class="c-cyan">h</span><span class="c-pink">i</span><span class="c-yellow">n</span><span class="c-green">e</span>
     </h1>
 
     <div class="search-box">
@@ -257,8 +379,8 @@
     </div>
 
     <div class="actions">
-      <button id="luckyBtn">I'm Feeling Lucky</button>
-      <button id="allBtn">Show All Fixes</button>
+      <button id="luckyBtn">🎲 I'm Feeling Lucky</button>
+      <button id="allBtn">📋 Show All Fixes</button>
     </div>
   </header>
 
@@ -266,13 +388,15 @@
     <!-- Search / Index List View -->
     <section id="listView">
       <div class="stats" id="statsText">Loading fixes...</div>
-      <div id="resultsContainer"></div>
+      <div id="resultsContainer" class="results-grid"></div>
     </section>
 
     <!-- Single Fix Reader View -->
     <section id="articleView" class="article-view">
       <button class="back-btn" id="backBtn">← Back to results</button>
-      <article id="articleContent" class="article-content"></article>
+      <div class="article-card">
+        <article id="articleContent" class="article-content"></article>
+      </div>
     </section>
   </main>
 
@@ -290,31 +414,30 @@
     const articleView = document.getElementById('articleView');
     const articleContent = document.getElementById('articleContent');
 
-    // Parse optional YAML-style frontmatter at the top of .md files
+    // Normalize line endings and strip frontmatter reliably
     function parseMarkdownFile(filename, rawText) {
-      let title = filename.replace('.md', '').replace(/-/g, ' ');
+      const normalized = rawText.replace(/\r\n/g, '\n').replace(/\r/g, '\n').trim();
+      let title = filename.replace(/\.md$/i, '').replace(/[-_]+/g, ' ');
       let tags = [];
-      let body = rawText;
+      let body = normalized;
 
-      const fmMatch = rawText.match(/^---\s*\n([\s\S]*?)\n---\s*\n([\s\S]*)$/);
+      const fmMatch = normalized.match(/^---\s*\n([\s\S]*?)\n---\s*(?:\n([\s\S]*))?$/);
       if (fmMatch) {
         const frontmatter = fmMatch[1];
-        body = fmMatch[2];
+        body = (fmMatch[2] || '').trim();
 
         const titleMatch = frontmatter.match(/^title:\s*(.+)$/m);
-        if (titleMatch) title = titleMatch[1].trim();
+        if (titleMatch) title = titleMatch[1].trim().replace(/^["']|["']$/g, '');
 
         const tagsMatch = frontmatter.match(/^tags:\s*(.+)$/m);
         if (tagsMatch) {
           tags = tagsMatch[1].split(',').map(t => t.trim()).filter(Boolean);
         }
       } else {
-        // Fallback: use first "# Heading" as title if no frontmatter exists
-        const h1Match = rawText.match(/^#\s+(.+)$/m);
+        const h1Match = normalized.match(/^#\s+(.+)$/m);
         if (h1Match) title = h1Match[1].trim();
       }
 
-      // Create clean plain-text version for snippets & search
       const plainText = body
         .replace(/```[\s\S]*?```/g, ' ')
         .replace(/[#>*_`~\-\[\]()]/g, ' ')
@@ -322,7 +445,7 @@
         .trim();
 
       return {
-        slug: filename.replace('.md', ''),
+        slug: filename.replace(/\.md$/i, ''),
         filename,
         title,
         tags,
@@ -331,8 +454,20 @@
       };
     }
 
-    // Build a short snippet centered around the search query
+    // Render Markdown safely even if CDN marked.js ever fails to load
+    function renderMarkdown(mdText) {
+      if (window.marked && typeof window.marked.parse === 'function') {
+        return window.marked.parse(mdText);
+      }
+      const escaped = mdText
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;');
+      return `<pre>${escaped}</pre>`;
+    }
+
     function buildSnippet(plainText, query) {
+      if (!plainText) return 'No preview text available.';
       if (!query) {
         return plainText.slice(0, 165) + (plainText.length > 165 ? '...' : '');
       }
@@ -361,25 +496,25 @@
         : allFixes;
 
       const elapsed = ((performance.now() - startTime) / 1000).toFixed(3);
-      statsText.textContent = `About ${filtered.length} fix${filtered.length === 1 ? '' : 'es'} (${elapsed} seconds)`;
+      statsText.textContent = `Showing ${filtered.length} fix${filtered.length === 1 ? '' : 'es'} (${elapsed}s)`;
 
       if (filtered.length === 0) {
-        resultsContainer.innerHTML = `<p>No fixes matched <strong>${query}</strong>. Try a different keyword or error code.</p>`;
+        resultsContainer.innerHTML = `<div class="empty-state">No fixes matched <strong>${query}</strong>. Try another keyword, command, or tag.</div>`;
         return;
       }
 
       resultsContainer.innerHTML = filtered.map(fix => {
         const tagsHtml = fix.tags.map(tag =>
-          `<span class="tag" onclick="filterByTag('${tag}')">${tag}</span>`
+          `<span class="tag" onclick="event.stopPropagation(); filterByTag('${tag.replace(/'/g, "\\'")}')">#${tag}</span>`
         ).join('');
 
         return `
-          <div class="card">
+          <div class="card" onclick="openFix('${fix.slug}')">
             <div class="card-url">worksonmymachine › fixes › ${fix.slug}</div>
-            <a class="card-title" href="#${fix.slug}" onclick="openFix('${fix.slug}'); return false;">
+            <a class="card-title" href="#${fix.slug}" onclick="event.preventDefault(); event.stopPropagation(); openFix('${fix.slug}');">
               ${fix.title}
             </a>
-            <div class="card-snippet">${buildSnippet(fix.plainText, query.trim())}</div>
+            <p class="card-snippet">${buildSnippet(fix.plainText, query.trim())}</p>
             <div class="tags">${tagsHtml}</div>
           </div>
         `;
@@ -395,13 +530,13 @@
       articleView.style.display = 'block';
 
       const tagsHtml = fix.tags.length
-        ? `<div class="tags" style="margin-bottom:16px;">${fix.tags.map(t => `<span class="tag">${t}</span>`).join('')}</div>`
+        ? `<div class="tags" style="margin-bottom:18px;">${fix.tags.map(t => `<span class="tag" onclick="filterByTag('${t.replace(/'/g, "\\'")}')">#${t}</span>`).join('')}</div>`
         : '';
 
       articleContent.innerHTML = `
         <h1>${fix.title}</h1>
         ${tagsHtml}
-        ${marked.parse(fix.body)}
+        ${renderMarkdown(fix.body)}
       `;
       window.scrollTo(0, 0);
     }
@@ -418,7 +553,6 @@
       renderResults(tag);
     }
 
-    // Load manifest.json and fetch every listed .md file
     async function init() {
       try {
         const res = await fetch(MANIFEST_URL);
@@ -437,7 +571,6 @@
         allFixes = loaded.filter(Boolean);
         renderResults();
 
-        // Open direct link if URL has a #hash
         if (window.location.hash) {
           openFix(window.location.hash.slice(1));
         }
@@ -447,7 +580,6 @@
       }
     }
 
-    // Event Listeners
     searchInput.addEventListener('input', e => {
       if (articleView.style.display === 'block') closeFix();
       renderResults(e.target.value);
