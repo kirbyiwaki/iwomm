@@ -9,3 +9,4 @@ By default, Chromium-based browsers keep background extensions and processes ali
 1. Open `chrome://settings/system` (or `edge://settings/system`).
 2. Toggle **OFF** *"Continue running background apps when Google Chrome is closed"*.
 3. Enable **Memory Saver** under the **Performance** tab.
+---

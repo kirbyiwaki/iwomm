@@ -4,34 +4,31 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>worksOnMyMachine</title>
-  <!-- Fun display font + Dracula-friendly UI & code fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link
     href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap"
     rel="stylesheet"
   />
-  <!-- Lightweight Markdown parser -->
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
   <style>
     :root {
-      /* Dracula Theme Palette */
+      /* Dracula Surface + Saturated Google Accent Colors */
       --bg: #282a36;
       --bg-elevated: #21222c;
       --card-bg: #313442;
-      --card-hover: #383b4d;
+      --card-hover: #363948;
       --border: #44475a;
       --fg: #f8f8f2;
-      --comment: #8b9bb4;
-      --cyan: #8be9fd;
-      --green: #50fa7b;
-      --orange: #ffb86c;
-      --pink: #ff79c6;
+      --muted: #9aa5b8;
+      --g-blue: #4285f4;
+      --g-red: #ea4335;
+      --g-yellow: #fbbc05;
+      --g-green: #34a853;
+      --link: #6ea8fe;
       --purple: #bd93f9;
-      --red: #ff5555;
-      --yellow: #f1fa8c;
-      --code-bg: #1e1f29;
-      --shadow: 0 8px 24px rgba(15, 16, 23, 0.45);
+      --orange: #ffb86c;
+      --code-bg: #1c1d26;
     }
 
     * {
@@ -43,43 +40,35 @@
       font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
       background: var(--bg);
       color: var(--fg);
-      line-height: 1.6;
+      line-height: 1.65;
       min-height: 100vh;
     }
 
-    /* Header & Fun Parody Logo */
+    /* Header & Saturated Google-Style Parody Logo */
     header {
       display: flex;
       flex-direction: column;
       align-items: center;
       padding: 34px 16px 24px;
-      background: linear-gradient(180deg, var(--bg-elevated) 0%, var(--bg) 100%);
+      background: var(--bg-elevated);
       border-bottom: 1px solid var(--border);
     }
 
     .logo {
-      font-family: 'Fredoka', 'Comic Sans MS', cursive, sans-serif;
+      font-family: 'Fredoka', cursive, sans-serif;
       font-size: clamp(2rem, 5vw, 3.1rem);
       font-weight: 700;
-      letter-spacing: 0.5px;
+      letter-spacing: 0.4px;
       margin: 0 0 18px;
       cursor: pointer;
       user-select: none;
-      text-shadow: 0 3px 0 rgba(0, 0, 0, 0.35);
-      transition: transform 0.15s ease;
+      text-shadow: 0 2px 8px rgba(0, 0, 0, 0.45);
     }
 
-    .logo:hover {
-      transform: scale(1.02);
-    }
-
-    /* Dracula-tinted parody colors */
-    .c-cyan   { color: var(--cyan); }
-    .c-pink   { color: var(--pink); }
-    .c-yellow { color: var(--yellow); }
-    .c-green  { color: var(--green); }
-    .c-purple { color: var(--purple); }
-    .c-orange { color: var(--orange); }
+    .g-blue   { color: var(--g-blue); }
+    .g-red    { color: var(--g-red); }
+    .g-yellow { color: var(--g-yellow); }
+    .g-green  { color: var(--g-green); }
 
     .search-box {
       width: 100%;
@@ -90,13 +79,13 @@
       border: 1.5px solid var(--border);
       border-radius: 999px;
       padding: 11px 18px;
-      transition: border-color 0.15s ease, box-shadow 0.15s ease;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
     }
 
     .search-box:hover,
     .search-box:focus-within {
-      border-color: var(--purple);
-      box-shadow: 0 0 0 3px rgba(189, 147, 249, 0.2);
+      border-color: var(--g-blue);
+      box-shadow: 0 0 14px rgba(66, 133, 244, 0.25);
     }
 
     .search-box input {
@@ -110,13 +99,13 @@
     }
 
     .search-box input::placeholder {
-      color: var(--comment);
+      color: var(--muted);
     }
 
     .clear-btn {
       background: none;
       border: none;
-      color: var(--comment);
+      color: var(--muted);
       font-size: 17px;
       cursor: pointer;
       display: none;
@@ -124,7 +113,7 @@
     }
 
     .clear-btn:hover {
-      color: var(--red);
+      color: var(--g-red);
     }
 
     .actions {
@@ -145,13 +134,13 @@
       font-weight: 500;
       padding: 7px 14px;
       cursor: pointer;
-      transition: background 0.15s ease, border-color 0.15s ease, transform 0.1s ease;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
     }
 
     .actions button:hover {
       background: var(--card-hover);
-      border-color: var(--cyan);
-      transform: translateY(-1px);
+      border-color: var(--g-blue);
+      box-shadow: 0 0 10px rgba(66, 133, 244, 0.2);
     }
 
     /* Main Container */
@@ -163,11 +152,11 @@
 
     .stats {
       font-size: 13px;
-      color: var(--comment);
+      color: var(--muted);
       margin-bottom: 16px;
     }
 
-    /* Pretty Result Cards */
+    /* Cards with Subtle Glow (No Movement) */
     .results-grid {
       display: flex;
       flex-direction: column;
@@ -177,35 +166,27 @@
     .card {
       background: var(--card-bg);
       border: 1px solid var(--border);
-      border-left: 4px solid var(--purple);
+      border-left: 4px solid var(--g-blue);
       border-radius: 12px;
       padding: 16px 20px;
-      transition: transform 0.15s ease, border-color 0.15s ease, background 0.15s ease, box-shadow 0.15s ease;
       cursor: pointer;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
     }
 
-    .card:nth-child(4n+2) { border-left-color: var(--cyan); }
-    .card:nth-child(4n+3) { border-left-color: var(--green); }
-    .card:nth-child(4n+4) { border-left-color: var(--pink); }
+    .card:nth-child(4n+2) { border-left-color: var(--g-red); }
+    .card:nth-child(4n+3) { border-left-color: var(--g-yellow); }
+    .card:nth-child(4n+4) { border-left-color: var(--g-green); }
 
     .card:hover {
       background: var(--card-hover);
-      border-color: var(--purple);
-      transform: translateY(-2px);
-      box-shadow: var(--shadow);
-    }
-
-    .card-url {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 11.5px;
-      color: var(--comment);
-      margin-bottom: 4px;
+      border-color: rgba(110, 168, 254, 0.65);
+      box-shadow: 0 0 18px rgba(66, 133, 244, 0.16);
     }
 
     .card-title {
       font-size: 18px;
       font-weight: 600;
-      color: var(--cyan);
+      color: var(--link);
       text-decoration: none;
       display: inline-block;
       margin-bottom: 6px;
@@ -213,14 +194,13 @@
 
     .card:hover .card-title {
       text-decoration: underline;
-      color: var(--pink);
     }
 
     .card-snippet {
-      font-size: 14px;
+      font-size: 14.5px;
       color: var(--fg);
       margin: 0 0 12px;
-      overflow-wrap: anywhere;
+      overflow-wrap: break-word;
     }
 
     .tags {
@@ -233,22 +213,22 @@
       font-family: 'JetBrains Mono', monospace;
       font-size: 11.5px;
       background: var(--bg-elevated);
-      color: var(--green);
+      color: var(--g-green);
       border: 1px solid var(--border);
       padding: 2px 9px;
       border-radius: 999px;
       cursor: pointer;
-      transition: border-color 0.15s ease, color 0.15s ease;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
     }
 
     .tag:hover {
-      border-color: var(--yellow);
-      color: var(--yellow);
+      border-color: var(--g-yellow);
+      box-shadow: 0 0 8px rgba(251, 188, 5, 0.22);
     }
 
     mark {
-      background: rgba(241, 140, 241, 0.22);
-      color: var(--yellow);
+      background: rgba(251, 188, 5, 0.24);
+      color: var(--g-yellow);
       font-weight: 600;
       padding: 1px 4px;
       border-radius: 4px;
@@ -262,7 +242,7 @@
     .back-btn {
       background: var(--card-bg);
       border: 1px solid var(--border);
-      color: var(--cyan);
+      color: var(--link);
       font-family: inherit;
       padding: 7px 14px;
       border-radius: 8px;
@@ -270,12 +250,12 @@
       font-size: 13px;
       font-weight: 500;
       margin-bottom: 16px;
-      transition: border-color 0.15s ease, background 0.15s ease;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
     }
 
     .back-btn:hover {
-      background: var(--card-hover);
-      border-color: var(--cyan);
+      border-color: var(--g-blue);
+      box-shadow: 0 0 10px rgba(66, 133, 244, 0.2);
     }
 
     .article-card {
@@ -283,14 +263,13 @@
       border: 1px solid var(--border);
       border-radius: 14px;
       padding: 24px 28px;
-      box-shadow: var(--shadow);
-      overflow-wrap: anywhere;
+      box-shadow: 0 0 24px rgba(0, 0, 0, 0.25);
+      overflow-wrap: break-word;
     }
 
     .article-content h1,
     .article-content h2,
     .article-content h3 {
-      color: var(--purple);
       margin-top: 1.4em;
       margin-bottom: 0.5em;
       line-height: 1.3;
@@ -298,23 +277,24 @@
 
     .article-content h1:first-child {
       margin-top: 0;
-      font-size: 26px;
+      font-size: 25px;
       color: var(--fg);
     }
 
     .article-content h2 {
-      font-size: 20px;
-      color: var(--cyan);
+      font-size: 19px;
+      color: var(--link);
     }
 
     .article-content h3 {
       font-size: 16px;
-      color: var(--pink);
+      color: var(--purple);
     }
 
     .article-content p,
     .article-content li {
       color: var(--fg);
+      font-size: 15px;
       margin-bottom: 10px;
     }
 
@@ -323,8 +303,17 @@
       padding-left: 22px;
     }
 
+    .article-content strong {
+      color: #ffffff;
+      font-weight: 600;
+    }
+
+    .article-content em {
+      color: var(--g-yellow);
+    }
+
     .article-content a {
-      color: var(--cyan);
+      color: var(--link);
     }
 
     .article-content pre {
@@ -348,7 +337,7 @@
     .article-content pre code {
       padding: 0;
       background: transparent;
-      color: var(--green);
+      color: var(--fg);
     }
 
     .empty-state {
@@ -357,7 +346,7 @@
       border-radius: 12px;
       padding: 24px;
       text-align: center;
-      color: var(--comment);
+      color: var(--muted);
     }
   </style>
 </head>
@@ -365,7 +354,7 @@
 
   <header>
     <h1 class="logo" id="logoBtn" title="Reset search">
-      <span class="c-cyan">w</span><span class="c-pink">o</span><span class="c-yellow">r</span><span class="c-green">k</span><span class="c-purple">s</span><span class="c-orange">O</span><span class="c-cyan">n</span><span class="c-pink">M</span><span class="c-yellow">y</span><span class="c-green">M</span><span class="c-purple">a</span><span class="c-orange">c</span><span class="c-cyan">h</span><span class="c-pink">i</span><span class="c-yellow">n</span><span class="c-green">e</span>
+      <span class="g-blue">w</span><span class="g-red">o</span><span class="g-yellow">r</span><span class="g-blue">k</span><span class="g-green">s</span><span class="g-red">O</span><span class="g-yellow">n</span><span class="g-blue">M</span><span class="g-green">y</span><span class="g-red">M</span><span class="g-yellow">a</span><span class="g-blue">c</span><span class="g-green">h</span><span class="g-red">i</span><span class="g-yellow">n</span><span class="g-green">e</span>
     </h1>
 
     <div class="search-box">
@@ -385,13 +374,11 @@
   </header>
 
   <main>
-    <!-- Search / Index List View -->
     <section id="listView">
       <div class="stats" id="statsText">Loading fixes...</div>
       <div id="resultsContainer" class="results-grid"></div>
     </section>
 
-    <!-- Single Fix Reader View -->
     <section id="articleView" class="article-view">
       <button class="back-btn" id="backBtn">← Back to results</button>
       <div class="article-card">
@@ -414,28 +401,49 @@
     const articleView = document.getElementById('articleView');
     const articleContent = document.getElementById('articleContent');
 
-    // Normalize line endings and strip frontmatter reliably
-    function parseMarkdownFile(filename, rawText) {
-      const normalized = rawText.replace(/\r\n/g, '\n').replace(/\r/g, '\n').trim();
-      let title = filename.replace(/\.md$/i, '').replace(/[-_]+/g, ' ');
-      let tags = [];
-      let body = normalized;
+    function escapeHtml(str) {
+      return str
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    }
 
-      const fmMatch = normalized.match(/^---\s*\n([\s\S]*?)\n---\s*(?:\n([\s\S]*))?$/);
+    // Strip YAML frontmatter even with \r\n or accidental blank lines
+    function stripFrontmatter(text) {
+      let title = null;
+      let tags = [];
+      let body = text.replace(/\r\n/g, '\n').replace(/\r/g, '\n').trimStart();
+
+      const fmMatch = body.match(/^---\s*\n([\s\S]*?)\n---\s*\n?([\s\S]*)$/);
       if (fmMatch) {
-        const frontmatter = fmMatch[1];
+        const meta = fmMatch[1];
         body = (fmMatch[2] || '').trim();
 
-        const titleMatch = frontmatter.match(/^title:\s*(.+)$/m);
+        const titleMatch = meta.match(/^title:\s*(.+)$/m);
         if (titleMatch) title = titleMatch[1].trim().replace(/^["']|["']$/g, '');
 
-        const tagsMatch = frontmatter.match(/^tags:\s*(.+)$/m);
+        const tagsMatch = meta.match(/^tags:\s*(.+)$/m);
         if (tagsMatch) {
           tags = tagsMatch[1].split(',').map(t => t.trim()).filter(Boolean);
         }
-      } else {
-        const h1Match = normalized.match(/^#\s+(.+)$/m);
-        if (h1Match) title = h1Match[1].trim();
+      }
+
+      // Clean accidental leading indentation on non-code lines so Markdown doesn't treat them as code blocks
+      body = body.replace(/^[ \t]+(?=\S)/gm, '');
+
+      return { title, tags, body };
+    }
+
+    function parseMarkdownFile(filename, rawText) {
+      const { title: fmTitle, tags, body } = stripFrontmatter(rawText);
+      let title = fmTitle;
+
+      if (!title) {
+        const h1Match = body.match(/^#\s+(.+)$/m);
+        title = h1Match
+          ? h1Match[1].trim()
+          : filename.replace(/\.md$/i, '').replace(/[-_]+/g, ' ');
       }
 
       const plainText = body
@@ -454,32 +462,109 @@
       };
     }
 
-    // Render Markdown safely even if CDN marked.js ever fails to load
+    // Inline formatter used by fallback parser
+    function formatInline(text) {
+      let out = escapeHtml(text);
+      out = out.replace(/`([^`]+)`/g, '<code>$1</code>');
+      out = out.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+      out = out.replace(/\*([^*\n]+)\*/g, '<em>$1</em>');
+      return out;
+    }
+
+    // Fallback Markdown renderer if external marked.js doesn't load
+    function fallbackMarkdown(mdText) {
+      const lines = mdText.split('\n');
+      let html = '';
+      let inCodeBlock = false;
+      let codeBuffer = [];
+      let listType = null; // 'ul' or 'ol'
+
+      function closeList() {
+        if (listType) {
+          html += listType === 'ul' ? '</ul>' : '</ol>';
+          listType = null;
+        }
+      }
+
+      for (const line of lines) {
+        if (line.trim().startsWith('```')) {
+          closeList();
+          if (!inCodeBlock) {
+            inCodeBlock = true;
+            codeBuffer = [];
+          } else {
+            html += `<pre><code>${escapeHtml(codeBuffer.join('\n'))}</code></pre>`;
+            inCodeBlock = false;
+          }
+          continue;
+        }
+
+        if (inCodeBlock) {
+          codeBuffer.push(line);
+          continue;
+        }
+
+        const trimmed = line.trim();
+        if (!trimmed) {
+          closeList();
+          continue;
+        }
+
+        const h3 = trimmed.match(/^###\s+(.+)/);
+        if (h3) { closeList(); html += `<h3>${formatInline(h3[1])}</h3>`; continue; }
+
+        const h2 = trimmed.match(/^##\s+(.+)/);
+        if (h2) { closeList(); html += `<h2>${formatInline(h2[1])}</h2>`; continue; }
+
+        const h1 = trimmed.match(/^#\s+(.+)/);
+        if (h1) { closeList(); html += `<h1>${formatInline(h1[1])}</h1>`; continue; }
+
+        const ol = trimmed.match(/^\d+\.\s+(.+)/);
+        if (ol) {
+          if (listType !== 'ol') { closeList(); html += '<ol>'; listType = 'ol'; }
+          html += `<li>${formatInline(ol[1])}</li>`;
+          continue;
+        }
+
+        const ul = trimmed.match(/^[-*]\s+(.+)/);
+        if (ul) {
+          if (listType !== 'ul') { closeList(); html += '<ul>'; listType = 'ul'; }
+          html += `<li>${formatInline(ul[1])}</li>`;
+          continue;
+        }
+
+        closeList();
+        html += `<p>${formatInline(trimmed)}</p>`;
+      }
+
+      closeList();
+      return html;
+    }
+
     function renderMarkdown(mdText) {
       if (window.marked && typeof window.marked.parse === 'function') {
         return window.marked.parse(mdText);
       }
-      const escaped = mdText
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;');
-      return `<pre>${escaped}</pre>`;
+      return fallbackMarkdown(mdText);
     }
 
     function buildSnippet(plainText, query) {
-      if (!plainText) return 'No preview text available.';
+      if (!plainText) return '';
       if (!query) {
-        return plainText.slice(0, 165) + (plainText.length > 165 ? '...' : '');
+        return escapeHtml(plainText.slice(0, 165)) + (plainText.length > 165 ? '...' : '');
       }
       const lowerText = plainText.toLowerCase();
       const idx = lowerText.indexOf(query.toLowerCase());
       let start = idx > 50 ? idx - 50 : 0;
-      let snippet = plainText.slice(start, start + 175);
-      if (start > 0) snippet = '...' + snippet;
-      if (start + 175 < plainText.length) snippet += '...';
+      let rawSnippet = plainText.slice(start, start + 175);
+      if (start > 0) rawSnippet = '...' + rawSnippet;
+      if (start + 175 < plainText.length) rawSnippet += '...';
 
-      const escaped = query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-      return snippet.replace(new RegExp(`(${escaped})`, 'gi'), '<mark>$1</mark>');
+      const escapedQuery = query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      return escapeHtml(rawSnippet).replace(
+        new RegExp(`(${escapedQuery})`, 'gi'),
+        '<mark>$1</mark>'
+      );
     }
 
     function renderResults(query = '') {
@@ -496,23 +581,22 @@
         : allFixes;
 
       const elapsed = ((performance.now() - startTime) / 1000).toFixed(3);
-      statsText.textContent = `Showing ${filtered.length} fix${filtered.length === 1 ? '' : 'es'} (${elapsed}s)`;
+      statsText.textContent = `${filtered.length} fix${filtered.length === 1 ? '' : 'es'} (${elapsed}s)`;
 
       if (filtered.length === 0) {
-        resultsContainer.innerHTML = `<div class="empty-state">No fixes matched <strong>${query}</strong>. Try another keyword, command, or tag.</div>`;
+        resultsContainer.innerHTML = `<div class="empty-state">No fixes matched <strong>${escapeHtml(query)}</strong>.</div>`;
         return;
       }
 
       resultsContainer.innerHTML = filtered.map(fix => {
         const tagsHtml = fix.tags.map(tag =>
-          `<span class="tag" onclick="event.stopPropagation(); filterByTag('${tag.replace(/'/g, "\\'")}')">#${tag}</span>`
+          `<span class="tag" onclick="event.stopPropagation(); filterByTag('${tag.replace(/'/g, "\\'")}')">#${escapeHtml(tag)}</span>`
         ).join('');
 
         return `
           <div class="card" onclick="openFix('${fix.slug}')">
-            <div class="card-url">worksonmymachine › fixes › ${fix.slug}</div>
             <a class="card-title" href="#${fix.slug}" onclick="event.preventDefault(); event.stopPropagation(); openFix('${fix.slug}');">
-              ${fix.title}
+              ${escapeHtml(fix.title)}
             </a>
             <p class="card-snippet">${buildSnippet(fix.plainText, query.trim())}</p>
             <div class="tags">${tagsHtml}</div>
@@ -530,11 +614,11 @@
       articleView.style.display = 'block';
 
       const tagsHtml = fix.tags.length
-        ? `<div class="tags" style="margin-bottom:18px;">${fix.tags.map(t => `<span class="tag" onclick="filterByTag('${t.replace(/'/g, "\\'")}')">#${t}</span>`).join('')}</div>`
+        ? `<div class="tags" style="margin-bottom:18px;">${fix.tags.map(t => `<span class="tag" onclick="filterByTag('${t.replace(/'/g, "\\'")}')">#${escapeHtml(t)}</span>`).join('')}</div>`
         : '';
 
       articleContent.innerHTML = `
-        <h1>${fix.title}</h1>
+        <h1>${escapeHtml(fix.title)}</h1>
         ${tagsHtml}
         ${renderMarkdown(fix.body)}
       `;
