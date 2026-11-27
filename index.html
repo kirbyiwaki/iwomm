@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>worksOnMyMachine</title>
+  <!-- Lightweight Markdown parser -->
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <style>
+    :root {
+      --bg: #ffffff;
+      --surface: #ffffff;
+      --border: #dfe1e5;
+      --text: #202124;
+      --muted: #5f6368;
+      --link: #1a0dab;
+      --tag-bg: #f1f3f4;
+      --code-bg: #f6f8fa;
+      --shadow: 0 1px 6px rgba(32, 33, 36, 0.28);
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #202124;
+        --surface: #303134;
+        --border: #5f6368;
+        --text: #e8eaed;
+        --muted: #9aa0a6;
+        --link: #8ab4f8;
+        --tag-bg: #3c4043;
+        --code-bg: #171717;
+        --shadow: 0 1px 6px rgba(0, 0, 0, 0.6);
+      }
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+    }
+
+    /* Header & Google-Parody Logo */
+    header {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 36px 16px 20px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .logo {
+      font-size: clamp(1.8rem, 4vw, 2.7rem);
+      font-weight: 700;
+      letter-spacing: -1px;
+      margin: 0 0 18px;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    /* Classic search engine letter colors */
+    .c-blue   { color: #4285f4; }
+    .c-red    { color: #ea4335; }
+    .c-yellow { color: #fbbc05; }
+    .c-green  { color: #34a853; }
+
+    .search-box {
+      width: 100%;
+      max-width: 620px;
+      display: flex;
+      align-items: center;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 10px 18px;
+      transition: box-shadow 0.15s ease;
+    }
+
+    .search-box:hover,
+    .search-box:focus-within {
+      box-shadow: var(--shadow);
+      border-color: transparent;
+    }
+
+    .search-box input {
+      width: 100%;
+      border: none;
+      outline: none;
+      background: transparent;
+      color: var(--text);
+      font-size: 16px;
+    }
+
+    .clear-btn {
+      background: none;
+      border: none;
+      color: var(--muted);
+      font-size: 18px;
+      cursor: pointer;
+      display: none;
+      padding: 0 4px;
+    }
+
+    .actions {
+      margin-top: 14px;
+      display: flex;
+      gap: 10px;
+    }
+
+    .actions button {
+      background: var(--tag-bg);
+      border: 1px solid transparent;
+      border-radius: 4px;
+      color: var(--text);
+      font-size: 13px;
+      padding: 7px 14px;
+      cursor: pointer;
+    }
+
+    .actions button:hover {
+      border-color: var(--border);
+    }
+
+    /* Main Container */
+    main {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 18px 16px 60px;
+    }
+
+    .stats {
+      font-size: 13px;
+      color: var(--muted);
+      margin-bottom: 18px;
+    }
+
+    /* Search Result Cards */
+    .card {
+      margin-bottom: 24px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .card-url {
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 2px;
+    }
+
+    .card-title {
+      font-size: 19px;
+      color: var(--link);
+      text-decoration: none;
+      font-weight: 400;
+      cursor: pointer;
+      display: inline-block;
+      margin-bottom: 4px;
+    }
+
+    .card-title:hover {
+      text-decoration: underline;
+    }
+
+    .card-snippet {
+      font-size: 14px;
+      color: var(--text);
+      margin: 4px 0 8px;
+    }
+
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .tag {
+      font-size: 11px;
+      background: var(--tag-bg);
+      color: var(--muted);
+      padding: 2px 8px;
+      border-radius: 12px;
+      cursor: pointer;
+    }
+
+    .tag:hover {
+      color: var(--text);
+    }
+
+    mark {
+      background: #fef08a;
+      color: #111;
+      padding: 0 2px;
+      border-radius: 2px;
+    }
+
+    /* Article / Fix Detail View */
+    .article-view {
+      display: none;
+    }
+
+    .back-btn {
+      background: none;
+      border: 1px solid var(--border);
+      color: var(--link);
+      padding: 6px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 13px;
+      margin-bottom: 18px;
+    }
+
+    .article-content h1 {
+      margin-top: 0;
+      font-size: 24px;
+    }
+
+    .article-content pre {
+      background: var(--code-bg);
+      padding: 14px;
+      border-radius: 8px;
+      overflow-x: auto;
+      border: 1px solid var(--border);
+    }
+
+    .article-content code {
+      font-family: Consolas, Monaco, 'Courier New', monospace;
+      font-size: 13.5px;
+      background: var(--code-bg);
+      padding: 2px 5px;
+      border-radius: 4px;
+    }
+
+    .article-content pre code {
+      padding: 0;
+      background: none;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1 class="logo" id="logoBtn" title="Reset search">
+      <span class="c-blue">w</span><span class="c-red">o</span><span class="c-yellow">r</span><span class="c-blue">k</span><span class="c-green">s</span><span class="c-red">O</span><span class="c-blue">n</span><span class="c-yellow">M</span><span class="c-green">y</span><span class="c-red">M</span><span class="c-blue">a</span><span class="c-yellow">c</span><span class="c-green">h</span><span class="c-red">i</span><span class="c-blue">n</span><span class="c-green">e</span>
+    </h1>
+
+    <div class="search-box">
+      <input
+        type="text"
+        id="searchInput"
+        placeholder="Search Windows fixes, error codes, commands..."
+        autocomplete="off"
+      />
+      <button class="clear-btn" id="clearBtn" title="Clear">✕</button>
+    </div>
+
+    <div class="actions">
+      <button id="luckyBtn">I'm Feeling Lucky</button>
+      <button id="allBtn">Show All Fixes</button>
+    </div>
+  </header>
+
+  <main>
+    <!-- Search / Index List View -->
+    <section id="listView">
+      <div class="stats" id="statsText">Loading fixes...</div>
+      <div id="resultsContainer"></div>
+    </section>
+
+    <!-- Single Fix Reader View -->
+    <section id="articleView" class="article-view">
+      <button class="back-btn" id="backBtn">← Back to results</button>
+      <article id="articleContent" class="article-content"></article>
+    </section>
+  </main>
+
+  <script>
+    const FIXES_DIR = 'fixes/';
+    const MANIFEST_URL = 'manifest.json';
+
+    let allFixes = [];
+
+    const searchInput = document.getElementById('searchInput');
+    const clearBtn = document.getElementById('clearBtn');
+    const statsText = document.getElementById('statsText');
+    const resultsContainer = document.getElementById('resultsContainer');
+    const listView = document.getElementById('listView');
+    const articleView = document.getElementById('articleView');
+    const articleContent = document.getElementById('articleContent');
+
+    // Parse optional YAML-style frontmatter at the top of .md files
+    function parseMarkdownFile(filename, rawText) {
+      let title = filename.replace('.md', '').replace(/-/g, ' ');
+      let tags = [];
+      let body = rawText;
+
+      const fmMatch = rawText.match(/^---\s*\n([\s\S]*?)\n---\s*\n([\s\S]*)$/);
+      if (fmMatch) {
+        const frontmatter = fmMatch[1];
+        body = fmMatch[2];
+
+        const titleMatch = frontmatter.match(/^title:\s*(.+)$/m);
+        if (titleMatch) title = titleMatch[1].trim();
+
+        const tagsMatch = frontmatter.match(/^tags:\s*(.+)$/m);
+        if (tagsMatch) {
+          tags = tagsMatch[1].split(',').map(t => t.trim()).filter(Boolean);
+        }
+      } else {
+        // Fallback: use first "# Heading" as title if no frontmatter exists
+        const h1Match = rawText.match(/^#\s+(.+)$/m);
+        if (h1Match) title = h1Match[1].trim();
+      }
+
+      // Create clean plain-text version for snippets & search
+      const plainText = body
+        .replace(/```[\s\S]*?```/g, ' ')
+        .replace(/[#>*_`~\-\[\]()]/g, ' ')
+        .replace(/\s+/g, ' ')
+        .trim();
+
+      return {
+        slug: filename.replace('.md', ''),
+        filename,
+        title,
+        tags,
+        body,
+        plainText
+      };
+    }
+
+    // Build a short snippet centered around the search query
+    function buildSnippet(plainText, query) {
+      if (!query) {
+        return plainText.slice(0, 165) + (plainText.length > 165 ? '...' : '');
+      }
+      const lowerText = plainText.toLowerCase();
+      const idx = lowerText.indexOf(query.toLowerCase());
+      let start = idx > 50 ? idx - 50 : 0;
+      let snippet = plainText.slice(start, start + 175);
+      if (start > 0) snippet = '...' + snippet;
+      if (start + 175 < plainText.length) snippet += '...';
+
+      const escaped = query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      return snippet.replace(new RegExp(`(${escaped})`, 'gi'), '<mark>$1</mark>');
+    }
+
+    function renderResults(query = '') {
+      const q = query.trim().toLowerCase();
+      clearBtn.style.display = q ? 'block' : 'none';
+
+      const startTime = performance.now();
+      const filtered = q
+        ? allFixes.filter(fix =>
+            fix.title.toLowerCase().includes(q) ||
+            fix.plainText.toLowerCase().includes(q) ||
+            fix.tags.some(t => t.toLowerCase().includes(q))
+          )
+        : allFixes;
+
+      const elapsed = ((performance.now() - startTime) / 1000).toFixed(3);
+      statsText.textContent = `About ${filtered.length} fix${filtered.length === 1 ? '' : 'es'} (${elapsed} seconds)`;
+
+      if (filtered.length === 0) {
+        resultsContainer.innerHTML = `<p>No fixes matched <strong>${query}</strong>. Try a different keyword or error code.</p>`;
+        return;
+      }
+
+      resultsContainer.innerHTML = filtered.map(fix => {
+        const tagsHtml = fix.tags.map(tag =>
+          `<span class="tag" onclick="filterByTag('${tag}')">${tag}</span>`
+        ).join('');
+
+        return `
+          <div class="card">
+            <div class="card-url">worksonmymachine › fixes › ${fix.slug}</div>
+            <a class="card-title" href="#${fix.slug}" onclick="openFix('${fix.slug}'); return false;">
+              ${fix.title}
+            </a>
+            <div class="card-snippet">${buildSnippet(fix.plainText, query.trim())}</div>
+            <div class="tags">${tagsHtml}</div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function openFix(slug) {
+      const fix = allFixes.find(f => f.slug === slug);
+      if (!fix) return;
+
+      window.location.hash = slug;
+      listView.style.display = 'none';
+      articleView.style.display = 'block';
+
+      const tagsHtml = fix.tags.length
+        ? `<div class="tags" style="margin-bottom:16px;">${fix.tags.map(t => `<span class="tag">${t}</span>`).join('')}</div>`
+        : '';
+
+      articleContent.innerHTML = `
+        <h1>${fix.title}</h1>
+        ${tagsHtml}
+        ${marked.parse(fix.body)}
+      `;
+      window.scrollTo(0, 0);
+    }
+
+    function closeFix() {
+      history.replaceState(null, '', window.location.pathname);
+      articleView.style.display = 'none';
+      listView.style.display = 'block';
+    }
+
+    function filterByTag(tag) {
+      searchInput.value = tag;
+      closeFix();
+      renderResults(tag);
+    }
+
+    // Load manifest.json and fetch every listed .md file
+    async function init() {
+      try {
+        const res = await fetch(MANIFEST_URL);
+        if (!res.ok) throw new Error('Could not load manifest.json');
+        const filenames = await res.json();
+
+        const loaded = await Promise.all(
+          filenames.map(async file => {
+            const mdRes = await fetch(FIXES_DIR + file);
+            if (!mdRes.ok) return null;
+            const text = await mdRes.text();
+            return parseMarkdownFile(file, text);
+          })
+        );
+
+        allFixes = loaded.filter(Boolean);
+        renderResults();
+
+        // Open direct link if URL has a #hash
+        if (window.location.hash) {
+          openFix(window.location.hash.slice(1));
+        }
+      } catch (err) {
+        statsText.textContent = 'Error loading fixes. Make sure manifest.json exists.';
+        console.error(err);
+      }
+    }
+
+    // Event Listeners
+    searchInput.addEventListener('input', e => {
+      if (articleView.style.display === 'block') closeFix();
+      renderResults(e.target.value);
+    });
+
+    clearBtn.addEventListener('click', () => {
+      searchInput.value = '';
+      renderResults('');
+      searchInput.focus();
+    });
+
+    document.getElementById('backBtn').addEventListener('click', closeFix);
+    document.getElementById('allBtn').addEventListener('click', () => {
+      searchInput.value = '';
+      closeFix();
+      renderResults('');
+    });
+
+    document.getElementById('logoBtn').addEventListener('click', () => {
+      searchInput.value = '';
+      closeFix();
+      renderResults('');
+    });
+
+    document.getElementById('luckyBtn').addEventListener('click', () => {
+      if (allFixes.length === 0) return;
+      const randomFix = allFixes[Math.floor(Math.random() * allFixes.length)];
+      openFix(randomFix.slug);
+    });
+
+    window.addEventListener('hashchange', () => {
+      const slug = window.location.hash.slice(1);
+      if (slug) openFix(slug);
+      else closeFix();
+    });
+
+    init();
+  </script>
+</body>
+</html>
